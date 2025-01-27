@@ -1,15 +1,14 @@
 
 import React, { useEffect, useState } from 'react'
 import RenderTree from './render.component';
-import TreeNode from './test';
-function TreeComponent({data, node, width, height, CustomComponent}) {
+import { useDevice } from '../../hooks/useDevice';
+function TreeComponent({data, node, width, height, CustomComponent, levelSpacing, nodeSpacing, start, get}) {
     const [position, setPosition] = useState({ x: width, y: height/2 }); 
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({x:0, y:0});
-    const [scale, setScale] = useState(0.5);
+    const [scale, setScale] = useState(0.6);
     const [translate, setTranslate] = useState({ x: 0, y: 0 });
-
-    const [flattenedNodes, setFlattenedNodes] = useState([]);
+    const deviceSize = useDevice();
     
     const handleMouseDown = (e) => {
         setIsDragging(true);
@@ -19,21 +18,9 @@ function TreeComponent({data, node, width, height, CustomComponent}) {
         });
     };
     
-    const handleMouseMove = (e) => {
-        if (!isDragging) return;
-        setPosition({
-            x: e.clientX - dragStart.x,
-            y: e.clientY - dragStart.y,
-        });
-    };
-    
     const handleMouseUp = () => {
         setIsDragging(false);
     };
-
-    const handleMouseClick = (e) =>{
-       
-    }
 
     const handleMouseDrag = (e) => {
       if (e.buttons !== 1) return; 
@@ -56,33 +43,40 @@ function TreeComponent({data, node, width, height, CustomComponent}) {
     };
     
     return (
-        <div>
+        <div style={{
+           width: "100%",
+           overflow: "hidden"
+        }}
+        >
             <svg
                 style={{
                     border: "1px solid black",
                     position: "relative",
                     overflow: "hidden",
-
+                    width: "100%",
+                    height:"100%",
+                    boxSizing: "border-box",
                 }}
-                viewBox={`${translate.x} ${translate.y} ${1000 / scale} ${500 / scale}`}
+                viewBox={`${translate.x} ${translate.y} ${deviceSize.deviceWidth / scale} ${deviceSize.deviceHeight / scale}`}
                 preserveAspectRatio="xMidYMid meet"
                 onMouseMove={handleMouseDrag}
                 onMouseUp={handleMouseUp}
                 onWheel={handleWheel}
                 onMouseDown={handleMouseDown}
-                onClick={handleMouseClick}
                 >
                 <RenderTree
-                  node={data}
-                  x={800}
-                  y={200}
-                  levelSpacing={150}
-                  nodeSpacing={100}
+                  node={data} 
+                  x={start.x} 
+                  y={start.y}
+                  childX={null} 
+                  childY={null} 
+                  levelSpacing={levelSpacing} 
+                  nodeSpacing={nodeSpacing} 
                   CustomNode={CustomComponent}
+                  customOffsetX={0}
+                  customOffsetY={0}
                   nodeWidth={node.width}
-                  nodeHeight={node.height}  
-                  customOffsetX={50}
-                  customOffsetY={100}             
+                  nodeHeight={node.height}
                 />
             </svg>
         </div>
