@@ -1,3 +1,4 @@
+import { th } from "framer-motion/client";
 import Node from "./node";
 class Tree{
     constructor(tree){
@@ -12,26 +13,38 @@ class Tree{
         if (node.parents && Array.isArray(node.parents)) {
           newNode.parents = node.parents.map((parent) => this.convert(parent)); 
         }
+
+        if (node.siblings && Array.isArray(node.siblings)) {
+          newNode.siblings = node.siblings.map((sibling) => this.convert(sibling)); 
+        }
     
         return newNode; 
     }
 
     traverse(node, targetId) {
-        if (!node) return null; 
+      if (!node) return null;
     
-        if (node.id == targetId) {
-          return node;
+      if (node.id === targetId) {
+        return node;
+      }
+    
+      if (node.parents && node.parents.length > 0) {
+        for (const parent of node.parents) {
+          const foundNode = this.traverse(parent, targetId);
+          if (foundNode) return foundNode;
         }
+      }
     
-        if (node.parents && node.parents.length > 0) {
-          for (const parent of node.parents) {
-            const foundNode = this.traverse(parent, targetId); 
-            if (foundNode) return foundNode; 
-          }
+      if (node.siblings && node.siblings.length > 0) {
+        for (const sibling of node.siblings) {
+          const foundNode = this.traverse(sibling, targetId);
+          if (foundNode) return foundNode;
         }
+      }
     
-        return null;
+      return null;
     }
+    
 
     findChildByParentId(parentId) {
       const findChild = (node) => {
@@ -58,8 +71,18 @@ class Tree{
         if(childNode){
             childNode.addNode(parent);
         }
-
+        console.log(this.root)
         return this.root;
+    }
+
+    addSiblingToChild(childNodeId, sibling){
+      const childNode = this.traverse(this.root, childNodeId)
+
+      if(childNode){
+          childNode.addSibling(sibling);
+      }
+      console.log(this.root)
+      return this.root;
     }
 
     removeParentFromNode(parentId){
@@ -71,6 +94,46 @@ class Tree{
       }
 
       return this.root;
+    }
+
+
+    findSiblingBySiblingId(siblingId) {
+      const findSibling = (node) => {
+          if (node.siblings && node.siblings.some(sibling => sibling.id === siblingId)) {
+              return node;
+          }
+  
+          if (node.parents && node.parents.length !== 0) {
+              for (let parent of node.parents) {
+                  const result = findSibling(parent);
+                  if (result) return result; 
+              }
+          }
+  
+          return null; 
+      };
+  
+      return findSibling(this.root);
+    }
+
+    removeSibling(siblingId) {
+      const sibling = this.findSiblingBySiblingId(siblingId)
+      const node = this.traverse(this.root, sibling.id);
+      if(node){
+        node.removeSibling(siblingId)
+      }
+  
+      return this.root;
+    }
+
+    changeData(id, nodeData){
+      const node = this.traverse(this.root, id); 
+
+      if(node){
+        node.changeData(nodeData);
+      }
+
+      return this.root
     }
     
 }

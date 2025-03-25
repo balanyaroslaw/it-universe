@@ -5,14 +5,14 @@ import nonimage from '../../assets/nonimageperson.png'
 import useTreeStore from '../../store/tree.store'
 import useModalStore from '../../store/modal.store'
 import { windowList } from '../keys/windowList'
-function NodeComponent({width, height, position, scale=1, node}) {
+function NodeComponent({width, height, position, scale=1, node, isSibling}) {
     const imageSize = {width:+(width/1.15), height:+(height/1.75)} 
     const setNode = useTreeStore((state)=>state.setNode)
     const openModal = useModalStore((state)=>state.open)
 
     const handleNodeClick = () =>{
         setNode(node)
-        openModal(windowList.informationWindow)
+        openModal(windowList.informationWindow, isSibling?'sibling':'parent')
     }
     return (
             <g 
@@ -45,7 +45,7 @@ function NodeComponent({width, height, position, scale=1, node}) {
                     rx={10}
                     ry={10}
                     fill="white"
-                    stroke="#e0e0e0"
+                    stroke={isSibling?'pink':'purple'}
                     strokeWidth={1.5}
                 />
 
@@ -96,6 +96,10 @@ function NodeComponent({width, height, position, scale=1, node}) {
                     cx={width-15}
                     cy={15}
                     r={10}
+                    onClick={()=>{
+                        openModal(windowList.changeWindow);
+                        setNode(node);
+                    }}  
                 />
                 
                 <image
@@ -106,34 +110,41 @@ function NodeComponent({width, height, position, scale=1, node}) {
                     height={10}
                     textAnchor="middle" 
                     dominantBaseline="middle"
-                    onClick={()=>openModal(windowList.changeWindow)}
-                />
-
-                <circle
-                    fill="#cbcbcbe9"
-                    cx={width-15}
-                    cy={height-14}
-                    r={10}
-                />
-
-                <text
-                    x={width-15}
-                    y={height-10}
-                    textAnchor="middle"
-                    fontSize="14"
-                    fontWeight="bold"
-                    fill="#000"
-                    cursor="pointer"
-                    style={{
-                        userSelect: "none", 
-                      }}
                     onClick={()=>{
-                        setNode(node)
-                        openModal(windowList.addWindow);
+                        openModal(windowList.changeWindow);
+                        setNode(node);
                     }}
-                >
-                    +
-                </text> 
+                />
+
+                {!isSibling&&(
+                    <>
+                        <circle
+                            fill="#cbcbcbe9"
+                            cx={width-15}
+                            cy={height-14}
+                            r={10}
+                        />
+
+                        <text
+                            x={width-15}
+                            y={height-10}
+                            textAnchor="middle"
+                            fontSize="14"
+                            fontWeight="bold"
+                            fill="#000"
+                            cursor="pointer"
+                            style={{
+                                userSelect: "none", 
+                            }}
+                            onClick={()=>{
+                                setNode(node)
+                                openModal(windowList.memberWindow);
+                            }}
+                        >
+                            +
+                        </text>
+                    </>
+                )}
             </g>
     )
 }

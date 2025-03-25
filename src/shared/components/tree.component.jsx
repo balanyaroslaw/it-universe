@@ -6,7 +6,7 @@ function TreeComponent({data, node, width, height, CustomComponent, levelSpacing
     const [position, setPosition] = useState({ x: width, y: height/2 }); 
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({x:0, y:0});
-    const [scale, setScale] = useState(0.6);
+    const [scale, setScale] = useState(0.8);
     const [translate, setTranslate] = useState({ x: 0, y: 0 });
     const deviceSize = useDevice();
     
@@ -43,14 +43,14 @@ function TreeComponent({data, node, width, height, CustomComponent, levelSpacing
     };
     
     return (
-        <div style={{
+        <div className="overflow-hidden" style={{
            width: "100%",
+           height:"600px",
            overflow: "hidden"
         }}
         >
             <svg
                 style={{
-                    border: "1px solid black",
                     position: "relative",
                     overflow: "hidden",
                     width: "100%",
