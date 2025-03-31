@@ -39,7 +39,6 @@ function TreeComponent({data, node, width, height, CustomComponent, levelSpacing
           return Math.min(Math.max(newScale, 0.1), 2);
         });
 
-        console.log(scale)
     };
     
     return (

@@ -3,11 +3,13 @@ import {Link} from 'react-router-dom'
 import Logo from '../../assets/logo.png'
 import { pre } from "framer-motion/client";
 import CreateWindow from "../windows/create.window";
+import useModalStore from "../../store/modal.store";
+import { windowList } from "../keys/windowList";
 function MainMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('');
   const [showModal, setShowModal] = useState(false);
-
+  const open = useModalStore((state)=>state.open)
   return (
     <div className="w-full bg-white shadow-md z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -67,7 +69,9 @@ function MainMenu() {
             
             <div className="ml-3 relative">
               <button
-                onClick={() => {}}
+                onClick={() => {
+                  open(windowList.profileWindow)
+                }}
                 className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
                 <span className="sr-only">View profile</span>

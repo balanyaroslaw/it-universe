@@ -11,17 +11,34 @@ import Tree from "../types/tree";
 import Node from "../types/node";
 import useModalStore from "../store/modal.store";
 import { windowList } from "../shared/keys/windowList";
+import LoadingSpinner from "../shared/components/loading.component";
+import CreateWindow from "../shared/windows/create.window";
 
 
 function TreeBoard() {
   const [tree, node] = [useTreeStore((state) => state.tree), useTreeStore((state) => state.node)];
+  const open = useModalStore((state)=>state.open)
+  const getTree = useTreeStore((state)=>state.getTree);
   const modalStatus = useModalStore((state)=>state.isOpen)
   const window = useModalStore((state)=>state.window)
-
-  console.log(node)
+  const loading = useTreeStore((state)=>state.loading);
+  const treeExist = !!localStorage.getItem('TREE_ID');
+  console.log(tree)
+  useEffect(()=>{
+    const fetchTree = async ()=>{
+        await getTree();
+    }
+    if(treeExist){
+      fetchTree();
+    }
+    else{
+      open(windowList.createTree)
+    }
+  },[])
    return(
     <div className="relative w-100 h-100">
-      <div className="relative w-100 h-100 flex z-0">
+      <div className="relative w-100 flex z-0 items-center justify-center">
+        {tree&&!loading?
         <TreeComponent 
           node={{width:150, height:140}}
           data = {tree}
@@ -30,6 +47,7 @@ function TreeBoard() {
           nodeSpacing={100}
           levelSpacing={200}
         />
+        :treeExist?<LoadingSpinner/>:<CreateWindow isOpen={modalStatus}/>}
         {node && window === windowList.informationWindow && modalStatus && (
             <SideWindow isOpen={modalStatus} node={node} />
         )}

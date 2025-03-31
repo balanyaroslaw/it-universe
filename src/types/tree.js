@@ -2,14 +2,16 @@ import { th } from "framer-motion/client";
 import Node from "./node";
 class Tree{
     constructor(tree){
-        this.root = this.convert(tree)
+      this.index = 0;
+      this.root = this.convert(tree)
     }
 
     convert(node) {
         if (!node) return null; 
+        const newNode = new Node(node);
+        newNode.isRoot = this.index === 0; 
     
-        const newNode = new Node(node.id, node.name);
-    
+        this.index++; 
         if (node.parents && Array.isArray(node.parents)) {
           newNode.parents = node.parents.map((parent) => this.convert(parent)); 
         }
@@ -17,6 +19,8 @@ class Tree{
         if (node.siblings && Array.isArray(node.siblings)) {
           newNode.siblings = node.siblings.map((sibling) => this.convert(sibling)); 
         }
+
+        this.index++
     
         return newNode; 
     }
@@ -64,7 +68,7 @@ class Tree{
     
       return findChild(this.root); 
     }
-
+    
     addParentToChild(childNodeId, parent){
         const childNode = this.traverse(this.root, childNodeId)
 

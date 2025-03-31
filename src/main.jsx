@@ -11,11 +11,12 @@ import MainMenu from './shared/components/menu.component'
 import Footer from './shared/components/footer.components'
 import { Router } from './router/router'
 import {publicRoutes } from './router/routes'
+import useModalStore from './store/modal.store'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
    <BrowserRouter>
     <MainMenu/>
-     <Router/>
+      <Router/>
     <Footer/>
   </BrowserRouter>
   </StrictMode>

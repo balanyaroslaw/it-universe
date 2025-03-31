@@ -12,6 +12,7 @@ function NodeComponent({width, height, position, scale=1, node, isSibling}) {
 
     const handleNodeClick = () =>{
         setNode(node)
+        console.log(node)
         openModal(windowList.informationWindow, isSibling?'sibling':'parent')
     }
     return (
@@ -30,8 +31,8 @@ function NodeComponent({width, height, position, scale=1, node, isSibling}) {
                             x={(width-imageSize.width)/2}
                             y={10}
                             href={node.url}
-                            width={+(width/1.15)}
-                            height={+(height/1.75)}
+                            width={Number(width/1.15)}
+                            height={Number(height/1.75)}
                             textAnchor="middle" 
                             dominantBaseline="middle"
                             rx={10}
@@ -45,7 +46,7 @@ function NodeComponent({width, height, position, scale=1, node, isSibling}) {
                     rx={10}
                     ry={10}
                     fill="white"
-                    stroke={isSibling?'pink':'purple'}
+                    stroke={node.isUser?'green':isSibling?'pink':'purple'}
                     strokeWidth={1.5}
                 />
 
@@ -74,7 +75,7 @@ function NodeComponent({width, height, position, scale=1, node, isSibling}) {
                       }}
                      onClick={()=>handleNodeClick()}
                 >
-                    {node.name}
+                    {node.firstName}
                 </text>
                 
                 <text

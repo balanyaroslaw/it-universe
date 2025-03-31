@@ -1,5 +1,6 @@
 import { create } from 'zustand'
 import Tree from '../types/tree'
+import treeService from '../shared/services/tree.service';
 /*const initialTree = {
     id: "1",
     name: "You",
@@ -240,39 +241,116 @@ const initialTree = {
   ],
   siblings: []
 };
+const treeId = localStorage.getItem('TREE_ID');
+const treeExist = !!localStorage.getItem('TREE_ID');
 const useTreeStore = create((set) => ({
-    tree: initialTree,
+    tree: null,
+    treeId:null,
     node: null,
+    loading:null,
+
+
+    getTree: async () => {
+      if(treeExist){
+        const newTree = await treeService.getTree(treeId);
+        if (newTree) {
+            const convertedTree = new Tree(newTree);
+            set({ tree: convertedTree.root }); 
+            return convertedTree
+        }
+      }
+    },
+
+
     addNewNode: (childNode, newNode) => set((state) => {
-        const newTree = new Tree(state.tree);
-        newTree.addParentToChild(childNode.id, newNode);
-        return { tree: newTree.root };
+      state.loading = true;
+    
+      (async () => {
+        if (treeExist) {
+          await treeService.addParent(treeId, childNode.id, newNode);
+          const tree = await state.getTree();
+          if(tree){
+            set({ loading: false }); 
+          }
+        }
+      })();
+
+      return state.tree
     }),
-    addSibling: (childNode, newNode) => set((state) => {
+
+
+    addSibling: (childId, newNode) => set((state) => {
+      state.loading = true;
+
       const newTree = new Tree(state.tree);
-      newTree.addSiblingToChild(childNode.id, newNode);
-      return { tree: newTree.root };
+      const childNode = newTree.traverse(newTree.root, childId);
+
+      if(!childNode?.parents && childNode?.parents.length<2){
+        const error = "У вас не вказані батьки"
+        return error
+      }
+
+      (async()=>{
+        const parentsId = childNode?.parents.map(parent=>parent.id);
+        if(treeExist && parentsId.length>1){
+          await treeService.addSibling(treeId, parentsId, newNode);
+          const tree = await state.getTree();
+
+          if(tree){
+            set({ loading: false }); 
+          }
+        }
+        
+      })()
+
+      return state.tree
     }),
-    removeSibling: (sibling) => set((state) => {
-      const newTree = new Tree(state.tree);
-      newTree.removeSibling(sibling.id);
-      return { tree: newTree.root };
+
+    
+    removeNode: async (nodeId) => set(async (state)=> {
+      state.loading = true;
+
+      (async()=>{
+        if(treeExist && nodeId){
+          await treeService.removeNode(treeId, nodeId);
+          const tree = await state.getTree();
+          if(tree){
+            set({ loading: false }); 
+          }
+        }
+      })()
+
+      return state.tree
     }),
-    removeNode: (parent) => set((state)=>{
-      const newTree = new Tree(state.tree);
-      newTree.removeParentFromNode(parent.id);
-      return { tree: newTree.root };
-    }),
+
+
     changeNode: (nodeId, node) => set((state)=>{
-      const newTree = new Tree(state.tree);
-      newTree.changeData(nodeId, node);
-      return { tree: newTree.root };
+      state.loading = true;
+
+      (async()=>{
+        await treeService.changeData(treeId, nodeId, node);
+        const tree = await state.getTree();
+        if(tree){
+          set({ loading: false }); 
+        }
+      })();
+
+      return state.tree
     }),
+
+
     deleteTree: () => set(()=>({
 
     })),
+
+
     setNode: (settedNode) => set(()=>({
       node: settedNode
+    })),
+
+    
+    setId: (id) => set(()=>({
+      treeId: id
     }))
 
 }))

@@ -2,6 +2,8 @@ import AboutUs from "../pages/about.page";
 import Dashboard from "../pages/dashboard.page";
 import TreeBoard from "../pages/tree.page";
 import Login from "../pages/login.page";
+import Signup from "../pages/signup.page";
+import IsAuth from "../shared/components/auth.component";
 export const publicRoutes = [
     {
         route:'/',
@@ -12,11 +14,19 @@ export const publicRoutes = [
         element:<AboutUs/>
     },
     {
-        route:'/tree',
-        element:<TreeBoard/>
-    },
-    {
         route:'/login',
         element:<Login/>
+    },
+    {
+        route:'/signup',
+        element:<Signup/>
+    },
+]
+
+
+export const privateRoutes = [
+    {
+        route:'/tree',
+        element:<TreeBoard/>
     },
 ]

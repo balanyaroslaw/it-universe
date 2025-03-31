@@ -1,24 +1,16 @@
-
-import { Button } from '@blueprintjs/core';
 import React, {useState} from 'react'
+import { X, Trash, User} from "lucide-react";
 import useModalStore from '../../store/modal.store';
 import { windowList } from '../keys/windowList';
 import useTreeStore from '../../store/tree.store';
 
 function SideWindow({ node }) {
   const close = useModalStore((state) => state.close);
-  const removeParent = useTreeStore((state) => state.removeNode);
-  const removeSibling = useTreeStore((state) => state.removeSibling);
-  const member = useModalStore((state)=>state.member)
+  const removeNode = useTreeStore((state) => state.removeNode);
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
-  const handleDelete = () => {
+  const handleDelete = async () => {
     if (isConfirmingDelete) {
-      if(member==='sibling'){
-        removeSibling(node);
-      }
-      else{
-        removeParent(node);
-      }
+      await removeNode(node.id);
       close(windowList.informationWindow);
     } else {
       setIsConfirmingDelete(true);
@@ -26,21 +18,17 @@ function SideWindow({ node }) {
   };
   
   return (
-    <div className="absolute right-0 h-full w-1/3 bg-white z-10 flex flex-col animate-slideIn overflow-hidden">
-      <div className="p-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white flex justify-between items-center">
+    <div className="absolute right-0 h-full w-1/4 bg-white z-10 flex flex-col animate-slideIn overflow-hidden">
+      <div className="p-4 bg-gradient-to-r from-green-500 to-green-400 text-white flex justify-between items-center">
         <div className="flex items-center gap-2">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-          </svg>
-          <h2 className="text-lg font-semibold">Parent Information</h2>
+          <User size={24} />
+          <h2 className="text-lg font-semibold">Інформація</h2>
         </div>
         <button 
           onClick={() => close(windowList.informationWindow)} 
           className="text-white hover:text-blue-200 transition-colors"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-          </svg>
+          <X size={24}/>
         </button>
       </div>
       
@@ -48,25 +36,39 @@ function SideWindow({ node }) {
         <div className="bg-blue-50 rounded-lg p-4 mb-6 border border-blue-100">
           <div className="flex items-center justify-center mb-4">
             <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold">
-              {node.name?.charAt(0) || ""}
-              {node.lastname?.charAt(0) || ""}
+              {node.firstName?.charAt(0) || ""}
+              {node.lastName?.charAt(0) || ""}
             </div>
           </div>
-          <h3 className="text-center text-lg font-medium text-gray-800">{node.name} {node.lastname}</h3>
+          <h3 className="text-center text-lg font-medium text-gray-800">{node.firstName} {node.lastName}</h3>
           {node.role && <p className="text-center text-sm text-gray-500">{node.role}</p>}
         </div>
 
         <div className="space-y-4">
-          <h4 className="font-medium text-gray-700 text-md border-b pb-2">Personal Details</h4>
+          <h4 className="font-medium text-gray-700 text-md border-b pb-2">Персональні деталі</h4>
 
-          <div className="rounded-md bg-gray-50 p-3">
-            <div className="flex justify-between items-center mb-2">
-              <span className="font-medium text-sm text-gray-600">Name</span>
-              <span className="font-medium text-gray-900">{node.name || "-"}</span>
+          <div className="flex flex-col gap-1 rounded-md bg-gray-50 p-3">
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-sm text-gray-600">Ім'я</span>
+              <span className="font-medium text-gray-900">{node.firstName || "-"}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="font-medium text-sm text-gray-600">Last Name</span>
-              <span className="font-medium text-gray-900">{node.lastname || "-"}</span>
+              <span className="font-medium text-sm text-gray-600">Прізвище</span>
+              <span className="font-medium text-gray-900">{node.lastName || "-"}</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-sm text-gray-600">По-батькові</span>
+              <span className="font-medium text-gray-900">{node.fatherName || "-"}</span>
+            </div>
+            {node.gender==='female'&&
+              <div className="flex justify-between items-center">
+                <span className="font-medium text-sm text-gray-600">Дівоче прізвище</span>
+                <span className="font-medium text-gray-900">{node.maidenName || "-"}</span>
+              </div>
+            }
+            <div className="flex justify-between items-center">
+              <span className="font-medium text-sm text-gray-600">Дата народження</span>
+              <span className="font-medium text-gray-900">{node.birthDate || "-"}</span>
             </div>
           </div>
 
@@ -87,20 +89,22 @@ function SideWindow({ node }) {
       </div>
       
       <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-between">
-        <Button
-          intent="secondary"
-          icon="cross"
-          text="Close"
+        <button
           onClick={() => close(windowList.informationWindow)}
-          className="px-4 py-2"
-        />
-        <Button
-          intent={isConfirmingDelete ? "danger" : "warning"}
-          icon="trash"
-          text={isConfirmingDelete ? "Confirm Delete" : "Delete"}
+          className="px-4 py-2 border border-gray-300 bg-white text-gray-700 rounded-md flex items-center gap-2 hover:bg-gray-100 transition"
+        >
+          <X className="w-5 h-5" />
+          Закрити
+        </button>
+        <button
           onClick={handleDelete}
-          className="px-4 py-2"
-        />
+          className={`px-4 py-2 rounded-md text-white flex items-center gap-2 transition ${
+            isConfirmingDelete ? "bg-red-600 hover:bg-red-700" : "bg-green-500 hover:bg-green-600"
+          }`}
+        >
+          <Trash className="w-5 h-5" />
+          {isConfirmingDelete ? "Підтвердити" : "Видалити"}
+        </button>
       </div>
     </div>
   );

@@ -1,57 +1,54 @@
-import { th } from "framer-motion/client";
-
-class Node{
-    constructor(id, name, lastname, secondname, birthdate, deathdate, birthplace, deathplace, parents = [], siblings=[]){
-        this.id = id;
-        this.name = name;
-        this.lastname = lastname;
-        this.secondname = secondname;
-        this.birthdate = birthdate;
-        this.deathdate = deathdate;
-        this.birthplace = birthplace;
-        this.deathplace = deathplace;
-        this.parents = parents
-        this.siblings = siblings
+import moment from "moment";
+class Node {
+    constructor(tree) {
+        this.id = tree.id;
+        this.familyTreeId = tree.family_tree_id;
+        this.firstName = tree.first_name;
+        this.lastName = tree.last_name;
+        this.fatherName = tree.father_name;
+        this.birthDate = tree.birth_date&&moment(tree.birth_date).format("DD-MM-YYYY");
+        this.maidenName = tree.maiden_name;
+        this.deathDate = tree.death_date;
+        this.bio = tree.bio;
+        this.isUser = tree.is_user;
+        this.userId = tree.user_id;
+        this.parents = tree.parents;
+        this.siblings = tree.siblings;
+        this.children = tree.children;
+        this.img = tree.img;
+        this.createdAt = tree.created_at;
+        this.gender = tree.gender
+        this.isRoot = null
     }
 
-    addNode(parent){
-        if(this.parents.length<2){
-            this.parents.push(parent)
-            if (this.siblings.length !== 0) {
-                console.log(this.siblings);
-                this.siblings.forEach(sibling => sibling.parents.push(parent));
-            }            
+    addParent(parent) {
+        if (this.parents.length < 2) {
+            this.parents.push(parent);
+            this.siblings.forEach(sibling => sibling.parents.push(parent));
         }
-        else return
     }
 
-    changeData(node) {
-        this.name = node.name;
-        this.lastname = node.lastname;
-        this.secondname = node.secondname;
-        this.birthdate = node.birthdate;
-        this.deathdate = node.deathdate;
-        this.birthplace = node.birthplace;
-        this.deathplace = node.deathplace;
-        
-        if (Array.isArray(node.parents)) this.parents = node.parents;
-        if (Array.isArray(node.siblings)) this.siblings = node.siblings;
-    }  
-
-    addSibling(sibling){
-        this.siblings.push(sibling)
-        this.siblings.map(sibling=>sibling.parents=[...this.parents])
+    updateData(newData) {
+        Object.keys(newData).forEach(key => {
+            if (this.hasOwnProperty(key)) {
+                this[key] = newData[key];
+            }
+        });
     }
 
-    removeSibling(siblingId){
-        this.siblings = this.siblings.filter((sibling)=>sibling.id!==siblingId)
-        console.log(this.siblings)
+    addSibling(sibling) {
+        this.siblings.push(sibling);
+        this.siblings.forEach(sib => sib.parents = [...this.parents]);
     }
-    
-    removeNode(parentId){
-        this.parents = this.parents.filter((parent)=>parent.id!==parentId)
-        this.siblings.forEach((sibling) => {
-            sibling.parents = sibling.parents.filter((parent) => parent.id !== parentId);
+
+    removeSibling(siblingId) {
+        this.siblings = this.siblings.filter(sibling => sibling.id !== siblingId);
+    }
+
+    removeParent(parentId) {
+        this.parents = this.parents.filter(parent => parent.id !== parentId);
+        this.siblings.forEach(sibling => {
+            sibling.parents = sibling.parents.filter(parent => parent.id !== parentId);
         });
     }
 }

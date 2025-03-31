@@ -2,9 +2,15 @@ import React, { useState } from 'react';
 import Logo from '../assets/logo.png';
 import MainMenu from '../shared/components/menu.component';
 import CreateWindow from '../shared/windows/create.window';
+import Profile from '../shared/windows/profile.window';
+import useModalStore from '../store/modal.store';
+import { windowList } from '../shared/keys/windowList';
+import userService from '../shared/services/user.service';
 function Dashboard() {
   const [showModal, setShowModal] = useState(false);
-
+  const modalStatus = useModalStore((state)=>state.isOpen)
+  const window = useModalStore((state)=>state.window)
+  const isAuth  = userService.isAuthenticated();
   return (
     <>
      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-200 flex flex-col items-center px-6 py-12">
@@ -98,6 +104,7 @@ function Dashboard() {
         <p>© 2025 AncTree. All rights reserved.</p>
       </div>
       <CreateWindow isOpen={showModal} close={setShowModal}/>
+      {modalStatus && window===windowList.profileWindow&& isAuth&&<Profile/>}
     </div>
     </>
   );

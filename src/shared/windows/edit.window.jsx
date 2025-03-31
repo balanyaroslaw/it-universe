@@ -1,20 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Button, Dialog, FormGroup, InputGroup } from "@blueprintjs/core";
 import useModalStore from "../../store/modal.store";
 import useTreeStore from "../../store/tree.store";
 import Node from "../../types/node";
 import { windowList } from "../keys/windowList";
-import { User, Calendar,MapPinHouse, X} from "lucide-react";
+import { User, Calendar,MapPinHouse, X, VenusAndMars} from "lucide-react";
 import { v4 as uuid } from 'uuid'
 const EditDetailsModal = ({ isOpen, onClose, onSubmit, node}) => {
   const [formData, setFormData] = useState({
-    name: "",
+    firstName: "",
     lastName: "",
-    secondName:"",
+    fatherName:"",
     birthDate: "",
     deathDate: "",
     birthPlace: "",
     deathPlace: "",
+    gender:"",
+    maidenName:""
   });
 
   const close = useModalStore((state)=>state.close)
@@ -24,51 +25,75 @@ const EditDetailsModal = ({ isOpen, onClose, onSubmit, node}) => {
   const addNewNode = useTreeStore((state)=>state.addNewNode)
   const addSibling = useTreeStore((state)=>state.addSibling)
   const changeData = useTreeStore((state)=>state.changeNode)
-  console.log(member)
+  const getTree = useTreeStore((state)=>state.getTree)
   useEffect(() => {
     if (node) {
       setFormData({
-        name: node.name || "",
+        firstName: node.firstName || "",
         lastName: node.lastName || "",
-        secondName:node.secondName || "",
+        fatherName:node.fatherName || "",
+        maidenName:node.maidenName || "",
         birthDate: node.birthDate || "",
         deathDate: node.deathDate || "",
         birthPlace: node.birthPlace || "",
         deathPlace: node.deathPlace || "",
+        gender:node.gender || ""
       });
     }
   }, [node]);
 
   const handleChange = (e) => {
-    e.preventDefault()
-    changeData(node.id, formData)
+    e.preventDefault();
+
+    const jointData = {
+      firstName:formData.firstName,
+      lastName:formData.lastName,
+      fatherName:formData.fatherName,
+      maidenName:formData.maidenName,
+      gender:formData.gender,
+      birthDate:formData.birthDate&&new Date(formData.birthDate).toISOString()
+    }
+
+    changeData(node.id, jointData);
+
     close(windowList.changeWindow);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const jointData = {
+      firstName:formData.firstName,
+      lastName:formData.lastName,
+      fatherName:formData.fatherName,
+      maidenName:formData.maidenName,
+      gender:formData.gender,
+      birthDate:formData.birthDate&&new Date(formData.birthDate).toISOString()
+    }
+
     if(member==='parent'){
-      const parentId = uuid()
-      addNewNode(data, new Node(parentId, formData.name, formData.lastName));
+      console.log(data.id)
+      await addNewNode(data,jointData);
     }
     else if(member==='sibling'){
-      const siblingId = uuid()
-      addSibling(data, new Node(siblingId, formData.name, formData.lastName));
+      console.log(data.id);
+      const error = addSibling(data.id, jointData);
     }
     close(windowList.addWindow);
   };
-
-
   return (
     isOpen&&
     <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 overflow-hidden">
+      <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 overflow-hidden flex flex-col max-h-[90vh]">
         <div className={`flex items-center justify-between 
-          ${member==='sibling'?'bg-purple-200':member==='parent'?'bg-pink-200':'bg-lime-200'} px-6 py-4`}>
+          ${member==='sibling'?'bg-purple-200':
+            member==='parent'?'bg-pink-200':
+            member==='child'?'bg-blue-200':'bg-lime-200'} px-6 py-4`}>
 
           <h2 className="text-xl font-semibold text-black">
             {member==='sibling'?'Додати брата/сестру':
-              member==='parent'?'Додати батька/мати'
+              member==='parent'?'Додати батька/мати':
+              member==='child'?'Додати дітей'
               :'Змінити дані про предка'}</h2>
           <button 
             onClick={()=>close(windowList.changeWindow)}
@@ -78,7 +103,7 @@ const EditDetailsModal = ({ isOpen, onClose, onSubmit, node}) => {
           </button>
         </div>
         
-        <div className="p-6">
+        <div className="flex-grow overflow-y-auto p-6">
           <form>
             <div className="space-y-4">
               <div className="pb-4 border-b border-gray-200">
@@ -92,16 +117,16 @@ const EditDetailsModal = ({ isOpen, onClose, onSubmit, node}) => {
                     <input 
                       type="text" 
                       placeholder="Ім'я" 
-                      className="w-full rounded-lg border border-gray-300 px-4 py-2   outline-none transition-all" 
-                      value={formData.name}
-                      onChange={e=>setFormData(prev=>({...prev, name:e.target.value}))}
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition-all" 
+                      value={formData.firstName}
+                      onChange={e=>setFormData(prev=>({...prev, firstName:e.target.value}))}
                     />
                   </div>
                   <div>
                     <input 
                       type="text" 
                       placeholder="Прізвище" 
-                      className="w-full rounded-lg border border-gray-300 px-4 py-2   outline-none transition-all" 
+                      className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition-all" 
                       value={formData.lastName}
                       onChange={e=>setFormData(prev=>({...prev, lastName:e.target.value}))}
                     />
@@ -112,11 +137,37 @@ const EditDetailsModal = ({ isOpen, onClose, onSubmit, node}) => {
                   <input 
                     type="text" 
                     placeholder="По-батькові" 
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2   outline-none transition-all"
-                    value={formData.secondName}
-                    onChange={e=>setFormData(prev=>({...prev, secondName:e.target.value}))}
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition-all"
+                    value={formData.fatherName}
+                    onChange={e=>setFormData(prev=>({...prev, fatherName:e.target.value}))}
                   />
                 </div>
+
+                <div className="mt-4 flex items-center justify-center">
+                  <div className="flex items-center gap-2 mr-2 justify-center">
+                    <VenusAndMars size={20} className="text-gray-300" />
+                    <span className="font-medium text-gray-600">Стать</span>
+                  </div>
+                  <select 
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition-all bg-white text-gray-600"
+                    onChange={(e)=>setFormData(prev=>({...prev, gender:e.target.value}))}
+                    value={formData.gender||'Оберіть стать'}
+                  >
+                    <option value='select'>Оберіть стать</option>
+                    <option value="male">Чоловік</option>
+                    <option value="female">Жінка</option>
+                  </select>
+                </div>
+
+                {formData.gender==='female'&&<div className="mt-4">
+                  <input 
+                    type="text" 
+                    placeholder="Дівоче прізвище" 
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition-all"
+                    value={formData.maidenName}
+                    onChange={e=>setFormData(prev=>({...prev, maidenName:e.target.value}))}
+                  />
+                </div>}
               </div>
               
               <div className="pb-4 border-b border-gray-200">
@@ -127,7 +178,9 @@ const EditDetailsModal = ({ isOpen, onClose, onSubmit, node}) => {
                 
                 <input 
                   type="date" 
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2   outline-none transition-all" 
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition-all"
+                  value={formData.birthDate}
+                  onChange={e=>setFormData(prev=>({...prev, birthDate:e.target.value}))} 
                 />
                 
                 <div className="mt-4">
@@ -138,7 +191,7 @@ const EditDetailsModal = ({ isOpen, onClose, onSubmit, node}) => {
                   <input 
                     type="text" 
                     placeholder="Місце народження" 
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2   outline-none transition-all" 
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition-all" 
                   />
                 </div>
               </div>
@@ -151,7 +204,7 @@ const EditDetailsModal = ({ isOpen, onClose, onSubmit, node}) => {
                 
                 <input 
                   type="date" 
-                  className="w-full rounded-lg border border-gray-300 px-4 py-2   outline-none transition-all" 
+                  className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition-all" 
                 />
                 
                 <div className="mt-4">
@@ -162,38 +215,42 @@ const EditDetailsModal = ({ isOpen, onClose, onSubmit, node}) => {
                   <input 
                     type="text" 
                     placeholder="Місце смерті" 
-                    className="w-full rounded-lg border border-gray-300 px-4 py-2   outline-none transition-all" 
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 outline-none transition-all" 
                   />
                 </div>
               </div>
             </div>
-            
-            <div className="mt-6 flex justify-end gap-3">
-              <button 
-                type="button" 
-                onClick={()=>close(windowList.changeWindow)}
-                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                Скасувати
-              </button>
-              <button 
-                type="submit" 
-                className={`
-                  px-4 py-2 ${member==='sibling'?'bg-purple-300 hover:bg-purple-200':member==='parent'?'bg-pink-300 hover:bg-pink-200':'bg-lime-300 hover:bg-lime-200'} 
-                  text-black rounded-lg transition-colors`}
-                onClick={(e)=>{
-                  if(window===windowList.addWindow){
-                    handleSubmit(e)
-                  }
-                  else if(window===windowList.changeWindow){
-                    handleChange(e)
-                  }
-                }}
-              >
-                Зберегти
-              </button>
-            </div>
           </form>
+        </div>
+        
+        <div className="px-6 py-4 border-t border-gray-200">
+          <div className="flex justify-end gap-3">
+            <button 
+              type="button" 
+              onClick={()=>close(windowList.changeWindow)}
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-100 transition-colors"
+            >
+              Скасувати
+            </button>
+            <button 
+              type="submit" 
+              className={`
+                px-4 py-2 ${member==='sibling'?'bg-purple-300 hover:bg-purple-200':
+                            member==='parent'?'bg-pink-300 hover:bg-pink-200':
+                            member==='child'?'bg-blue-300 hover:bg-blue-200':'bg-lime-300 hover:bg-lime-200'} 
+                text-black rounded-lg transition-colors`}
+                onClick={(e)=>{
+                if(window===windowList.addWindow){
+                  handleSubmit(e)
+                }
+                else if(window===windowList.changeWindow){
+                  handleChange(e)
+                }
+              }}
+            >
+              Зберегти
+            </button>
+          </div>
         </div>
       </div>
     </div>
