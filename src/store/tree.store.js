@@ -262,12 +262,30 @@ const useTreeStore = create((set) => ({
     },
 
 
-    addNewNode: (childNode, newNode) => set((state) => {
+    addParent: (childNode, newNode) => set((state) => {
       state.loading = true;
     
       (async () => {
         if (treeExist) {
           await treeService.addParent(treeId, childNode.id, newNode);
+          const tree = await state.getTree();
+          if(tree){
+            set({ loading: false }); 
+          }
+        }
+      })();
+
+      return state.tree
+    }),
+
+
+
+    addChild: (parentNode, newNode) => set((state) => {
+      state.loading = true;
+    
+      (async () => {
+        if (treeExist) {
+          await treeService.addChild(treeId, parentNode.id, newNode);
           const tree = await state.getTree();
           if(tree){
             set({ loading: false }); 

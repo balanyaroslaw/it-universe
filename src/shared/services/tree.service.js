@@ -1,4 +1,3 @@
-import { Children } from "react";
 import httpService from "./http.service";
 
 class TreeService{
@@ -74,6 +73,28 @@ class TreeService{
         }
     }
 
+    async addChild(treeID, parentId, childData){
+        try {
+            if(treeID){
+                const child = {
+                    first_name:childData.firstName,
+                    last_name:childData.lastName,
+                    father_name:childData.fatherName,
+                    birth_date:childData.birthDate || null,
+                    maiden_name:childData.maiden_name||null,
+                    gender:childData.gender,
+                    parents:[parentId],
+                    
+                }
+                await httpService.post(`tree/${treeID}`, child,{
+                    'Content-Type': 'multipart/form-data'
+                });
+            }
+        } catch (error) {
+            console.log('Add child', error)
+        }
+    }
+
     async removeNode(treeID, nodeId){
         try {
             if(treeID){
@@ -107,8 +128,8 @@ class TreeService{
         }
     }
 
-    setTree(tree){
-        localStorage.setItem('TREE_ID', tree.id)
+    setTree(treeId){
+        localStorage.setItem('TREE_ID', treeId)
     }
 
     removeTree(){

@@ -32,16 +32,23 @@ class UserService{
           password:userData.password,
           email:userData.email
         });
-
         const { access_token, refresh_token } = response.data;
-        const treeId = await httpService.get('/tree');
-        if(treeId && !localStorage.getItem('TREE_ID')){
-          treeService.setTree(treeId)
-        }
+        
         this.setTokens(
           access_token,
           refresh_token
         )
+
+        if(access_token && refresh_token){
+          const response = await httpService.get('/tree');
+          const tree = response.data;
+          const treeId = tree[0].id;
+          console.log(treeId)
+          if(treeId && !localStorage.getItem('TREE_ID')){
+            treeService.setTree(treeId)
+          }
+        }
+
         return { access_token, refresh_token };
       } 
       catch (error) {
