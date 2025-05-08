@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Calendar, User, Mail, Lock, MapPin, FileText, VenusAndMars } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import userService from '../services/user.service';
 import ShowPassword from './show.component';
 
 const AuthForm = ({ login }) => {
-  const [isLogin] = useState(login);
+  const [isLogin, setIsLogin] = useState(login);
   const [submitError, setSubmitError] = useState('');
   const [type, setType] = useState('password');
   const [pending, setPending] = useState(false);
@@ -37,20 +37,28 @@ const AuthForm = ({ login }) => {
         : await userService.logIn(data);
         
       if (response.access_token && response.refresh_token) {
-        navigate('/tree');
+        await navigate('/tree');
       }
     } catch (error) {
       setSubmitError(
         error?.response?.data?.message || 
-        'An error occurred during authentication'
+        'Сталася помилка під час автентифікації'
       );
+      setPending(false);
     }
   };
 
+  const toggleAuthMode = (e) => {
+    e.preventDefault();
+    setIsLogin(!isLogin);
+    const newPath = isLogin ? '/signup' : '/login';
+    window.history.pushState({}, '', newPath);
+  };
+
   return (
-    <div className="w-full max-w-md mx-auto bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-        {isLogin ? 'Log In to Your Account' : 'Create a New Account'}
+    <div className={`w-full max-w-md mx-auto bg-greenly rounded-lg shadow-md p-6 z-10 ${isLogin ? 'mt-[5%]': ''}`}>
+      <h2 className="text-2xl font-bold text-center text-brown mb-6">
+        {isLogin ? 'Увійти до облікового запису' : 'Створити новий обліковий запис'}
       </h2>
       
       {submitError && (
@@ -64,19 +72,19 @@ const AuthForm = ({ login }) => {
           {!isLogin && (
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700">First Name</label>
+                <label className="block text-sm font-medium text-gray-700">Ім'я</label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User size={16} className="text-gray-400" />
                   </div>
                   <input
                     type="text"
-                    placeholder="John"
+                    placeholder="Іван"
                     className={`pl-10 block w-full rounded-md shadow-sm sm:text-sm border p-2 ${
                       errors.firstName ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                     }`}
                     {...register('firstName', { 
-                      required: "First name is required" 
+                      required: "Ім'я обов'язкове" 
                     })}
                   />
                 </div>
@@ -86,19 +94,19 @@ const AuthForm = ({ login }) => {
               </div>
               
               <div className="col-span-1">
-                <label className="block text-sm font-medium text-gray-700">Last Name</label>
+                <label className="block text-sm font-medium text-gray-700">Прізвище</label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <User size={16} className="text-gray-400" />
                   </div>
                   <input
                     type="text"
-                    placeholder="Doe"
+                    placeholder="Петренко"
                     className={`pl-10 block w-full rounded-md shadow-sm sm:text-sm border p-2 ${
                       errors.lastName ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                     }`}
                     {...register('lastName', { 
-                      required: "Last name is required" 
+                      required: "Прізвище обов'язкове" 
                     })}
                   />
                 </div>
@@ -117,8 +125,8 @@ const AuthForm = ({ login }) => {
                     errors.gender ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                   }`}
                   {...register('gender', { 
-                    required: "Gender is required",
-                    validate: value => value !== 'select' || "Please select a gender" 
+                    required: "Стать обов'язкова",
+                    validate: value => value !== 'select' || "Будь ласка, оберіть стать" 
                   })}
                 >
                   <option value="select">Оберіть стать</option>
@@ -133,22 +141,22 @@ const AuthForm = ({ login }) => {
           )}
   
           <div>
-            <label className="block text-sm font-medium text-gray-700">Email</label>
+            <label className="block text-sm font-medium text-gray-700">Електронна пошта</label>
             <div className="mt-1 relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Mail size={16} className="text-gray-400" />
               </div>
               <input
                 type="email"
-                placeholder="you@example.com"
+                placeholder="ви@приклад.com"
                 className={`pl-10 block w-full rounded-md shadow-sm sm:text-sm border p-2 ${
                   errors.email ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
                 {...register('email', { 
-                  required: "Email is required", 
+                  required: "Електронна пошта обов'язкова", 
                   pattern: {
                     value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address"
+                    message: "Недійсна адреса електронної пошти"
                   }
                 })}
               />
@@ -159,7 +167,7 @@ const AuthForm = ({ login }) => {
           </div>
           
           <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
+            <label className="block text-sm font-medium text-gray-700">Пароль</label>
             <div className="flex mt-1 relative rounded-md shadow-sm">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                 <Lock size={16} className="text-gray-400" />
@@ -171,15 +179,15 @@ const AuthForm = ({ login }) => {
                   errors.password ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 focus:ring-indigo-500 focus:border-indigo-500'
                 }`}
                 {...register('password', { 
-                  required: "Password is required",
+                  required: "Пароль обов'язковий",
                   minLength: {
                     value: 8,
-                    message: "Password must be at least 8 characters"
+                    message: "Пароль має містити щонайменше 8 символів"
                   }
                 })}
               />
                <div className="absolute inset-y-0 right-0 pr-3 flex items-center z-50">
-                <ShowPassword setStatus={setType}  type={type}/>
+                <ShowPassword setStatus={setType} type={type}/>
               </div>
             </div>
             {errors.password && (
@@ -190,14 +198,14 @@ const AuthForm = ({ login }) => {
           {!isLogin && (
             <>
               <div>
-                <label className="block text-sm font-medium text-gray-700">Bio</label>
+                <label className="block text-sm font-medium text-gray-700">Біографія</label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <FileText size={16} className="text-gray-400" />
                   </div>
                   <textarea
                     rows="3"
-                    placeholder="Tell us about yourself..."
+                    placeholder="Розкажіть про себе..."
                     className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border p-2"
                     {...register('bio')}
                   ></textarea>
@@ -205,7 +213,7 @@ const AuthForm = ({ login }) => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700">Birthdate</label>
+                <label className="block text-sm font-medium text-gray-700">Дата народження</label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Calendar size={16} className="text-gray-400" />
@@ -219,14 +227,14 @@ const AuthForm = ({ login }) => {
               </div>
               
               <div>
-                <label className="block text-sm font-medium text-gray-700">Birthplace</label>
+                <label className="block text-sm font-medium text-gray-700">Місце народження</label>
                 <div className="mt-1 relative rounded-md shadow-sm">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <MapPin size={16} className="text-gray-400" />
                   </div>
                   <input
                     type="text"
-                    placeholder="City, Country"
+                    placeholder="Місто, Країна"
                     className="pl-10 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm border p-2"
                     {...register('birthplace')}
                   />
@@ -235,25 +243,29 @@ const AuthForm = ({ login }) => {
             </>
           )}
           
-          <div>
+          <div className='w-full flex justify-center'>
             <button
               type="submit"
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white 
-              ${!pending?'bg-indigo-600 hover:bg-indigo-700':'bg-gray-300'}focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
+              disabled={pending}
+              className={`flex justify-center py-2 px-6 border border-transparent rounded-md shadow-sm text-sm font-medium text-cream 
+                font-comfortaa 
+                ${!pending ? 'bg-[#97B948]' : 'bg-gray-300 cursor-not-allowed'} 
+                focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
             >
-              {isLogin ? 'Log In' : 'Sign Up'}
+              {pending ? 'Відправка...' : isLogin ? 'Увійти' : 'Зареєструватися'}
             </button>
           </div>
         </form>
       </div>
       
       <div className="mt-6 text-center">
-        <Link
-          className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
-          to={`${isLogin ? '/signup' : '/login'}`}
+        <a
+          href="#"
+          onClick={toggleAuthMode}
+          className="text-sm font-medium text-[#788951] hover:[#839558] font-comfortaa"
         >
-          {isLogin ? 'Need an account? Sign up' : 'Already have an account? Log in'}
-        </Link>
+          {isLogin ? "Немає облікового запису? Зареєструватися" : "Вже маєте обліковий запис? Увійти"}
+        </a>
       </div>
     </div>
   );

@@ -1,15 +1,14 @@
 
-import React, { useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import RenderTree from './render.component';
 import { useDevice } from '../../hooks/useDevice';
 function TreeComponent({data, node, width, height, CustomComponent, levelSpacing, nodeSpacing, start, get}) {
-    const [position, setPosition] = useState({ x: width, y: height/2 }); 
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragStart, setDragStart] = useState({x:0, y:0});
+    const [position] = useState({ x: width, y: height/2 }); 
+    const [_, setIsDragging] = useState(false);
+    const [__, setDragStart] = useState({x:0, y:0});
     const [scale, setScale] = useState(0.8);
     const [translate, setTranslate] = useState({ x: 0, y: 0 });
     const deviceSize = useDevice();
-    
     const handleMouseDown = (e) => {
         setIsDragging(true);
         setDragStart({

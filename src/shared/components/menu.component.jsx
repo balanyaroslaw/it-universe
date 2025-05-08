@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {Link} from 'react-router-dom'
 import Logo from '../../assets/logo.png'
-import { pre } from "framer-motion/client";
 import CreateWindow from "../windows/create.window";
 import useModalStore from "../../store/modal.store";
 import { windowList } from "../keys/windowList";
@@ -9,78 +8,67 @@ function MainMenu() {
   const [isOpen, setIsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState('');
   const [showModal, setShowModal] = useState(false);
+  const [_, setIsTreeExist] = useState(false);
+
+  useEffect(()=>{
+    if(!!!localStorage.getItem('TREE_ID')&&!!!localStorage.getItem("ACCESS_TOKEN")){
+      setIsTreeExist(true);
+    } 
+  },[])
   const open = useModalStore((state)=>state.open)
   return (
-    <div className="w-full bg-white shadow-md z-50">
+    <div className="w-full bg-tree shadow-md z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <img className="h-8 w-auto" src={Logo} alt="AncTree Logo" />
-              <span className="ml-2 text-xl font-bold text-green-700">AncTree</span>
+          <div className="flex w-full justify-center items-center">
+            <div className="font-outfit flex-shrink-0 flex items-center">
+              <img className="h-10 w-auto" src={Logo} alt="AncTree Logo" />
+              <span className="ml-2 text-2xl font-bold text-brown">ANCTREE</span>
             </div>
             
-            <div className="hidden sm:ml-10 sm:flex sm:space-x-8">
-              
+            <div className="flex w-full justify-center gap-10 items-center rounded-lg md:text-lg">
               <Link 
                 to="/" 
-                className={`${
-                  activeTab === 'dashboard'
-                    ? 'border-green-500 text-gray-900'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium focus:outline-none`}
                 onClick={() => setActiveTab('dashboard')}
+                className="text-brown focus:outline-none outline-none font-comfortaa no-underline hover:no-underline hover:text-xl hover:text-brown transition-all duration-300"
               >
-                Dashboard
-              </Link>
-
-              <Link 
-                to="/tree" 
-                className={`${
-                  activeTab === 'tree'
-                    ? 'border-green-500 text-gray-900'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium focus:outline-none`}
-                onClick={() => setActiveTab('tree')}
-              >
-                Family Tree
+                Головна
               </Link>
               
               <Link 
                 to="/about" 
-                className={`${
-                  activeTab === 'about'
-                    ? 'border-green-500 text-gray-900'
-                    : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-                } inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium focus:outline-none`}
                 onClick={() => setActiveTab('about')}
+                className="text-brown focus:outline-none outline-none font-comfortaa no-underline hover:no-underline hover:text-xl hover:text-brown transition-all duration-300"
               >
-                About Us
+                Про нас
               </Link>
             </div>
-          </div>
-          
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <button className="bg-green-600 px-4 py-2 rounded-md text-white text-sm font-medium hover:bg-green-700 
-              focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-              onClick={()=>setShowModal(prev=>!prev)}>
-              Create Tree
-            </button>
-            
-            <div className="ml-3 relative">
+
+            <div className="hidden sm:ml-6 sm:flex sm:items-center gap-4">
               <button
+                className="text-gray-500 md:text-md font-comfortaa"
                 onClick={() => {
-                  open(windowList.profileWindow)
+                  open(windowList.loginWindow)
                 }}
-                className="bg-white p-1 rounded-full text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
               >
-                <span className="sr-only">View profile</span>
-                <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
-                  <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
+                {!!!localStorage.getItem('ACCESS_TOKEN')?'Увійти':''}
               </button>
+
+              <div className="ml-3 relative">
+                <button
+                  onClick={() => {
+                    open(windowList.profileWindow)
+                  }}
+                  className="p-1 rounded-full hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                >
+                  <span className="sr-only">View profile</span>
+                  <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600">
+                    <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
           

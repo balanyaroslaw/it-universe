@@ -1,6 +1,5 @@
 
 import React, { useEffect } from 'react'
-import Login from '../../pages/login.page';
 import userService from '../services/user.service';
 import { useNavigate } from 'react-router-dom';
 

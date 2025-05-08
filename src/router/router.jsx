@@ -1,6 +1,5 @@
 import { Route, Routes } from "react-router-dom";
 import {privateRoutes, publicRoutes } from "./routes";
-import Dashboard from "../pages/dashboard.page";
 import IsAuth from "../shared/components/auth.component";
 
 export function Router(){

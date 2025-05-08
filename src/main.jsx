@@ -16,8 +16,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
    <BrowserRouter>
     <MainMenu/>
-      <Router/>
-    <Footer/>
+    <Router/>
   </BrowserRouter>
   </StrictMode>
 )
