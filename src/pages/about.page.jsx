@@ -103,7 +103,7 @@ function AboutUs() {
                     <h3 className="mt-4 text-xl font-medium text-gray-900">Ярослав Балан</h3>
                     <p className="text-gray-600">Front-end</p>
                     <p className="mt-3 text-gray-600 text-center">
-                      Idajsdh asdasd asdasd asdasd asdasd asdasd
+                      Front-end Developer
                     </p>
                   </div>
                 </div>

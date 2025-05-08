@@ -92,14 +92,11 @@ const EditDetailsModal = ({ isOpen, node }) => {
       <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
         <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 overflow-hidden flex flex-col max-h-[90vh]">
           <div
-            className={`flex items-center justify-between 
-              ${member === 'sibling' ? 'bg-purple-200' :
-                member === 'parent' ? 'bg-pink-200' :
-                  member === 'child' ? 'bg-blue-200' : 'bg-lime-200'} px-6 py-4`}
+            className={`flex items-center justify-between bg-greenly px-6 py-4`}
           >
             <h2 className="text-xl font-semibold text-black">
               {member === 'sibling' ? 'Додати брата/сестру' :
-                member === 'parent' ? 'Додати батька/мати' :
+                member === 'parent' ? "Додати члена сім'ї" :
                   member === 'child' ? 'Додати дітей' : 'Змінити дані про предка'}
             </h2>
             <button
@@ -247,9 +244,7 @@ const EditDetailsModal = ({ isOpen, node }) => {
                 <button
                   type="submit"
                   className={`
-                    px-4 py-2 ${member === 'sibling' ? 'bg-purple-300 hover:bg-purple-200' :
-                      member === 'parent' ? 'bg-pink-300 hover:bg-pink-200' :
-                        member === 'child' ? 'bg-blue-300 hover:bg-blue-200' : 'bg-lime-300 hover:bg-lime-200'}
+                    px-4 py-2 bg-greenly
                     text-black rounded-lg transition-colors`}
                 >
                   Зберегти

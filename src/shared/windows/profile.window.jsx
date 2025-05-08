@@ -1,10 +1,26 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { User, LogOut, X} from 'lucide-react';
 import { windowList } from '../keys/windowList';
 import userService from '../services/user.service';
 import useModalStore from '../../store/modal.store';
+import useTreeStore from '../../store/tree.store';
+import { useEdges } from 'reactflow';
 function Profile(){
-  const username = "John Doe"; 
+  const getTree = useTreeStore((state)=>state.getTree)
+  const tree = useTreeStore((state)=>state.tree)
+  useEffect(()=>{
+    const fetchTree = async ()=>{
+        await getTree();
+    }
+    if(!!localStorage.getItem('TREE_ID')){
+      fetchTree();
+    }
+    else{
+      open(windowList.createTree)
+    }
+  },[])
+
+  const username = !!localStorage.getItem('ACCESS_TOKEN')&&`${tree?.firstName} ${tree?.lastName}`; 
   const close = useModalStore((state)=>state.close)
   return (
     <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg p-6 border-l z-50">

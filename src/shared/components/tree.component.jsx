@@ -1,15 +1,14 @@
 
-import React, { useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import RenderTree from './render.component';
 import { useDevice } from '../../hooks/useDevice';
 function TreeComponent({data, node, width, height, CustomComponent, levelSpacing, nodeSpacing, start, get}) {
-    const [position, setPosition] = useState({ x: width, y: height/2 }); 
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragStart, setDragStart] = useState({x:0, y:0});
+    const [position] = useState({ x: width, y: height/2 }); 
+    const [_, setIsDragging] = useState(false);
+    const [__, setDragStart] = useState({x:0, y:0});
     const [scale, setScale] = useState(0.8);
     const [translate, setTranslate] = useState({ x: 0, y: 0 });
     const deviceSize = useDevice();
-    
     const handleMouseDown = (e) => {
         setIsDragging(true);
         setDragStart({
@@ -42,18 +41,13 @@ function TreeComponent({data, node, width, height, CustomComponent, levelSpacing
     };
     
     return (
-        <div className="overflow-hidden" style={{
-           width: "100%",
-           height:"600px",
-           overflow: "hidden"
-        }}
-        >
+        <div className="tree">
             <svg
                 style={{
                     position: "relative",
                     overflow: "hidden",
                     width: "100%",
-                    height:"100%",
+                    height:"100vh",
                     boxSizing: "border-box",
                 }}
                 viewBox={`${translate.x} ${translate.y} ${deviceSize.deviceWidth / scale} ${deviceSize.deviceHeight / scale}`}

@@ -1,89 +1,6 @@
 import { create } from 'zustand'
 import Tree from '../types/tree'
 import treeService from '../shared/services/tree.service';
-/*const initialTree = {
-    id: "1",
-    name: "You",
-    parents: [
-      {
-        id: "2",
-        name: "Parent 1",
-        parents: [
-          {
-            id: "4",
-            name: "Grandparent 1",
-            parents: [
-              {
-                id: "8",
-                name: "Great-Grandparent 1",
-                parents: [],
-              },
-              {
-                id: "9",
-                name: "Great-Grandparent 2",
-                parents: [],
-              },
-            ],
-          },
-          {
-            id: "5",
-            name: "Grandparent 2",
-            parents: [
-              {
-                id: "10",
-                name: "Great-Grandparent 3",
-                parents: [],
-              },
-              {
-                id: "11",
-                name: "Great-Grandparent 4",
-                parents: [],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        id: "3",
-        name: "Parent 2",
-        parents: [
-          {
-            id: "6",
-            name: "Grandparent 3",
-            parents: [
-              {
-                id: "12",
-                name: "Great-Grandparent 5",
-                parents: [],
-              },
-              {
-                id: "13",
-                name: "Great-Grandparent 6",
-                parents: [],
-              },
-            ],
-          },
-          {
-            id: "7",
-            name: "Grandparent 4",
-            parents: [
-              {
-                id: "14",
-                name: "Great-Grandparent 7",
-                parents: [],
-              },
-              {
-                id: "15",
-                name: "Great-Grandparent 8",
-                parents: [],
-              },
-            ],
-          },
-        ],
-      },
-    ],
-  }
-*/
 const initialTree = {
   id: '1',
   name: "Jaroslaw",
@@ -250,9 +167,9 @@ const useTreeStore = create((set) => ({
     loading:null,
 
 
-    getTree: async () => {
-      if(treeExist){
-        const newTree = await treeService.getTree(treeId);
+    getTree: async (id) => {
+      if(id){
+        const newTree = await treeService.getTree(id);
         if (newTree) {
             const convertedTree = new Tree(newTree);
             set({ tree: convertedTree.root }); 

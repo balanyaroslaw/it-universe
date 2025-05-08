@@ -1,7 +1,7 @@
-
 import React from 'react'
 import pencil from '../../assets/pencil.png'
-import nonimage from '../../assets/nonimageperson.png'
+import Man from '../../assets/man.png';
+import Woman from '../../assets/woman.png'
 import useTreeStore from '../../store/tree.store'
 import useModalStore from '../../store/modal.store'
 import { windowList } from '../keys/windowList'
@@ -45,37 +45,57 @@ function NodeComponent({width, height, position, scale=1, node, isSibling}) {
                     height={height}
                     rx={10}
                     ry={10}
-                    fill="white"
-                    stroke={node.isUser?'green':isSibling?'pink':'purple'}
-                    strokeWidth={1.5}
+                    fill="#ECF9C7"
+                    stroke={"#A2C450"}
+                    strokeWidth={2}
+                />
+
+                <defs>
+                    <clipPath id="imagePerson">
+                        <circle
+                        cx={width / 2}
+                        cy={imageSize.height / 2 + 10}
+                        r={Math.min(imageSize.width, imageSize.height) / 2}
+                        />
+                    </clipPath>
+                </defs>
+
+                <circle
+                    cx={width / 2}
+                    cy={imageSize.height / 2 + 10}
+                    r={Math.min(imageSize.width, imageSize.height) / 2}
+                    fill="#FEFFF1"
+                    stroke="#A2C450"        
+                    strokeWidth={3}   
                 />
 
                 <image
-                    x={(width-imageSize.width)/2}
+                    x={(width - imageSize.width) / 2}
                     y={10}
-                    href={nonimage}
-                    width={+(width/1.15)}
-                    height={+(height/1.75)}
-                    textAnchor="middle" 
-                    dominantBaseline="middle"
-                    clipPath="url(#imageClip)"
-                    onClick={()=>handleNodeClick()}
+                    href={node.gender === 'female' ? Woman : Man}
+                    width={imageSize.width}
+                    height={imageSize.height}
+                    clipPath="url(#imagePerson)"
+                    onClick={() => handleNodeClick()}
                 />
                 
                 <text
-                    x={width/2}
-                    y={imageSize.height+30}
-                    textAnchor="middle" 
-                    dominantBaseline="middle"
+                    x={width / 2}
+                    y={imageSize.height + 30}
+                    textAnchor="middle"
                     fontSize="14"
                     fontWeight="bold"
-                    fill="#000"
-                    style={{
-                        userSelect: "none", 
-                      }}
-                     onClick={()=>handleNodeClick()}
-                >
-                    {node.firstName}
+                    fill="#462F20"
+                    fontFamily="Comfortaa, sans-serif" 
+                    style={{ userSelect: 'none' }}
+                    onClick={() => handleNodeClick()}
+                    >
+                    <tspan x={width / 2} dy="0">
+                        {node.firstName}
+                    </tspan>
+                    <tspan x={width / 2} dy="1.2em">
+                        {node.lastName}
+                    </tspan>
                 </text>
                 
                 <text

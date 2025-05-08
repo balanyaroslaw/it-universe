@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom'
 const Footer = () => {
     const currentYear = new Date().getFullYear();
     const location = useLocation();
-    const { hash, pathname, search } = location;
+    const {pathname} = location;
   return (
     pathname!=='/tree'&&<div className="w-full mx-auto px-4 py-2 bg-gradient-to-r from-green-50 to-blue-50 bottom-0">
         <div className="mt-1">
