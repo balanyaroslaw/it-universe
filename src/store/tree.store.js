@@ -185,7 +185,8 @@ const useTreeStore = create((set) => ({
       (async () => {
         if (treeExist) {
           await treeService.addParent(treeId, childNode.id, newNode);
-          const tree = await state.getTree();
+          const tree = await state.getTree(treeId);
+          console.log(tree);
           if(tree){
             set({ loading: false }); 
           }
@@ -203,7 +204,7 @@ const useTreeStore = create((set) => ({
       (async () => {
         if (treeExist) {
           await treeService.addChild(treeId, parentNode.id, newNode);
-          const tree = await state.getTree();
+          const tree = await state.getTree(treeId);
           if(tree){
             set({ loading: false }); 
           }
@@ -229,8 +230,7 @@ const useTreeStore = create((set) => ({
         const parentsId = childNode?.parents.map(parent=>parent.id);
         if(treeExist && parentsId.length>1){
           await treeService.addSibling(treeId, parentsId, newNode);
-          const tree = await state.getTree();
-
+          const tree = await state.getTree(treeId);
           if(tree){
             set({ loading: false }); 
           }
@@ -248,7 +248,8 @@ const useTreeStore = create((set) => ({
       (async()=>{
         if(treeExist && nodeId){
           await treeService.removeNode(treeId, nodeId);
-          const tree = await state.getTree();
+          const tree = await state.getTree(treeId);
+          console.log(tree);
           if(tree){
             set({ loading: false }); 
           }
@@ -261,12 +262,13 @@ const useTreeStore = create((set) => ({
 
     changeNode: (nodeId, node) => set((state)=>{
       state.loading = true;
-
       (async()=>{
-        await treeService.changeData(treeId, nodeId, node);
-        const tree = await state.getTree();
-        if(tree){
-          set({ loading: false }); 
+        if(treeExist && nodeId){
+          await treeService.changeData(treeId, nodeId, node);
+          const tree = await state.getTree(treeId);
+          if(tree){
+            set({ loading: false }); 
+          }
         }
       })();
 

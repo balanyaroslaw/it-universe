@@ -113,9 +113,9 @@ class TreeService{
                     first_name:data.firstName,
                     last_name:data.lastName,
                     father_name:data.fatherName,
-                    maiden_name:data.maiden_name||null,
-                    birth_date:data.birthDate,
-                    gender:data.gender,                    
+                    maiden_name:data.maidenName||null,
+                    gender:data.gender,
+                    birth_date:data.birthDate||null,
                 }
                 await httpService.patch(`tree/${treeID}/${nodeId}`,newData,
                 {
