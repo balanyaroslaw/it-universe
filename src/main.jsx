@@ -15,7 +15,6 @@ import useModalStore from './store/modal.store'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
    <BrowserRouter>
-    <MainMenu/>
     <Router/>
   </BrowserRouter>
   </StrictMode>

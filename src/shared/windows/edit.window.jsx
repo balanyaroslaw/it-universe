@@ -15,7 +15,8 @@ const EditDetailsModal = ({ isOpen, node }) => {
       birthPlace: "",
       deathPlace: "",
       gender: "",
-      maidenName: ""
+      maidenName: "",
+      photos: null
     }
   });
 
@@ -27,6 +28,7 @@ const EditDetailsModal = ({ isOpen, node }) => {
   const addChild = useTreeStore((state) => state.addChild);
   const addSibling = useTreeStore((state) => state.addSibling);
   const changeData = useTreeStore((state) => state.changeNode);
+  const deleteImage = useTreeStore((state) => state.deleteImage);
 
   const gender = watch("gender");
 
@@ -51,7 +53,8 @@ const EditDetailsModal = ({ isOpen, node }) => {
       fatherName: formData.fatherName,
       maidenName: formData.maidenName,
       gender: formData.gender,
-      birthDate: formData.birthDate && new Date(formData.birthDate).toISOString()
+      birthDate: formData.birthDate && new Date(formData.birthDate).toISOString(),
+      photos: formData.photos
     };
 
     changeData(node.id, jointData);
@@ -65,7 +68,8 @@ const EditDetailsModal = ({ isOpen, node }) => {
       fatherName: formData.fatherName,
       maidenName: formData.maidenName,
       gender: formData.gender,
-      birthDate: formData.birthDate && new Date(formData.birthDate).toISOString()
+      birthDate: formData.birthDate && new Date(formData.birthDate).toISOString(),
+      photos: formData.photos
     };
 
     if (member === 'parent') {
@@ -87,12 +91,20 @@ const EditDetailsModal = ({ isOpen, node }) => {
     }
   };
 
+  const handleDeleteImage = (e) => {
+    e.preventDefault();
+    
+    node.img = null;
+    deleteImage(node.id);
+
+  }
+
   return (
     isOpen && (
-      <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 overflow-hidden flex flex-col max-h-[90vh]">
+      <div className="fixed inset-0 bg-black h-full pt-15 bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg shadow-2xl w-full max-w-md mx-4 overflow-hidden flex flex-col max-h-[90vh] mt-[4%]">
           <div
-            className={`flex items-center justify-between bg-greenly px-6 py-4`}
+            className={`flex items-center justify-between bg-greenly px-6 py-4 mt-15`}
           >
             <h2 className="text-xl font-semibold text-black">
               {member === 'sibling' ? 'Додати брата/сестру' :
@@ -178,6 +190,44 @@ const EditDetailsModal = ({ isOpen, node }) => {
                       />
                     </div>
                   )}
+                </div>
+                
+                <div className="pb-4 border-b border-gray-200">
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="font-medium text-gray-700">Фото</span>
+                  </div>
+                  {node? !node?.img ? 
+                  (
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-greenly file:text-black hover:file:bg-green-200"
+                      {...register("photos")}
+                    />
+                  ):
+                  node&&(
+                    <div className="flex flex-col items-start gap-2">
+                      <img
+                        src={node?.img}
+                        alt="Uploaded"
+                        className="w-32 h-32 object-cover rounded-lg border"
+                      />
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteImage(e)}
+                        className="text-red-600 hover:text-red-800 text-lg font-comfortaa"
+                      >
+                        Delete image
+                      </button>
+                    </div>
+                  ):
+                  <input
+                      type="file"
+                      accept="image/*"
+                      className="w-full border border-gray-300 rounded-lg px-4 py-2 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-greenly file:text-black hover:file:bg-green-200"
+                      {...register("photos")}
+                    />
+                  }
                 </div>
 
                 <div className="pb-4 border-b border-gray-200">

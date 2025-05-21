@@ -1,163 +1,6 @@
 import { create } from 'zustand'
 import Tree from '../types/tree'
 import treeService from '../shared/services/tree.service';
-const initialTree = {
-  id: '1',
-  name: "Jaroslaw",
-  parents: [
-      {
-          id: '2',
-          name: "Luyba",
-          parents: [
-              {
-                  id: '4',
-                  name: 'Lydmyla',
-                  parents: [
-                      {
-                          id: '13',
-                          name: "Manya",
-                          parents: [],
-                          siblings: []
-                      },
-                      {
-                          id: '14',
-                          name: "Ivan",
-                          parents: [],
-                          siblings: []
-                      }
-                  ],
-                  siblings: [
-                      {
-                          id: '11',
-                          name: "Valya",
-                          parents: [
-                              {
-                                  id: '13',
-                                  name: "Manya",
-                                  parents: [],
-                                  siblings: []
-                              },
-                              {
-                                  id: '14',
-                                  name: "Ivan",
-                                  parents: [],
-                                  siblings: []
-                              }
-                          ],
-                          siblings: []
-                      },
-                      {
-                          id: '15',
-                          name: "Nelya",
-                          parents: [
-                              {
-                                  id: '13',
-                                  name: "Manya",
-                                  parents: [],
-                                  siblings: []
-                              },
-                              {
-                                  id: '14',
-                                  name: "Ivan",
-                                  parents: [],
-                                  siblings: []
-                              }
-                          ],
-                          siblings: []
-                      },
-                      {
-                          id: '16',
-                          name: "Viktor",
-                          parents: [
-                              {
-                                  id: '13',
-                                  name: "Manya",
-                                  parents: [],
-                                  siblings: []
-                              },
-                              {
-                                  id: '14',
-                                  name: "Ivan",
-                                  parents: [],
-                                  siblings: []
-                              }
-                          ],
-                          siblings: []
-                      }
-                  ]
-              },
-              {
-                  id: '5',
-                  name: 'Mykola',
-                  parents: [
-                    {
-                      id:'18',
-                      name:"Ivan",
-                      parents:[],
-                      siblings:[]
-                    }
-                  ],
-                  siblings: [
-                    {
-                      id:'19',
-                      name:"Olya",
-                      parents: [
-                        {
-                          id:'18',
-                          name:"Ivan",
-                          parents:[],
-                          siblings:[]
-                        }
-                      ],
-                      siblings:[]
-                    },
-                  ]
-              }
-          ],
-          siblings: []
-      },
-      {
-          id: '3',
-          name: "Sergiy",
-          parents: [
-              {
-                  id: '6',
-                  name: 'Vera',
-                  parents: [],
-                  siblings: []
-              },
-              {
-                  id: '7',
-                  name: 'Vasyl',
-                  parents: [],
-                  siblings: []
-              }
-          ],
-          siblings: [
-              {
-                  id: '8',
-                  name: "Volodymyr",
-                  parents: [
-                      {
-                          id: '6',
-                          name: 'Vera',
-                          parents: [],
-                          siblings: []
-                      },
-                      {
-                          id: '7',
-                          name: 'Vasyl',
-                          parents: [],
-                          siblings: []
-                      }
-                  ],
-                  siblings: []
-              }
-          ]
-      }
-  ],
-  siblings: []
-};
 const treeId = localStorage.getItem('TREE_ID');
 const treeExist = !!localStorage.getItem('TREE_ID');
 const useTreeStore = create((set) => ({
@@ -257,6 +100,17 @@ const useTreeStore = create((set) => ({
       })()
 
       return state.tree
+    }),
+
+    deleteImage: (nodeId) => set((state)=>{
+     (async()=>{
+        if(treeExist && nodeId){
+          await treeService.deleteImage(treeId, nodeId);
+          await state.getTree(treeId);
+        }
+      })();
+
+      return state.tree;
     }),
 
 

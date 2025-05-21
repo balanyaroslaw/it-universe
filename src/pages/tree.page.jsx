@@ -9,7 +9,9 @@ import useModalStore from "../store/modal.store";
 import { windowList } from "../shared/keys/windowList";
 import LoadingSpinner from "../shared/components/loading.component";
 import CreateWindow from "../shared/windows/create.window";
-
+import MainMenu from "../shared/components/menu.component";
+import Profile from '../shared/windows/profile.window';
+import userService from '../shared/services/user.service';
 
 function TreeBoard() {
   const [tree, node] = [useTreeStore((state) => state.tree), useTreeStore((state) => state.node)];
@@ -19,6 +21,7 @@ function TreeBoard() {
   const window = useModalStore((state)=>state.window)
   const loading = useTreeStore((state)=>state.loading);
   const treeExist = !!localStorage.getItem('TREE_ID');
+  const isAuth = userService.isAuthenticated();
 
   useEffect(()=>{
     console.log(treeExist)
@@ -31,31 +34,37 @@ function TreeBoard() {
   },[])
 
    return(
-    <div className="relative w-100 h-100">
-      <div className="relative w-100 flex z-0 items-center justify-center">
-        <TreeComponent 
-          node={{width:150, height:140}}
-          data = {tree}
-          CustomComponent={NodeComponent}
-          start={{x:850, y:200}}
-          nodeSpacing={100}
-          levelSpacing={200}
-        />
-        {!tree || loading ? (treeExist ? <LoadingSpinner/> : <CreateWindow isOpen={modalStatus}/>) : null}
-        {tree && node && window === windowList.informationWindow && modalStatus && (
-            <SideWindow isOpen={modalStatus} node={node} />
-        )}
-        {node && window === windowList.memberWindow && modalStatus && (
-            <MemberWindow isOpen={modalStatus} node={node} />
-        )}
-        {node && window === windowList.changeWindow && modalStatus && (
-            <EditDetailsModal isOpen={modalStatus} node={node}/>
-        )}
-        {node && window === windowList.addWindow && modalStatus && (
-            <EditDetailsModal isOpen={modalStatus}/>
-        )}
+    <>
+      <div className="relative w-100 h-100">
+        <MainMenu/>
+        <div className="relative w-100 flex z-0 items-center justify-center">
+          <TreeComponent 
+            node={{width:150, height:140}}
+            data = {tree}
+            CustomComponent={NodeComponent}
+            start={{x:850, y:200}}
+            nodeSpacing={100}
+            levelSpacing={200}
+          />
+          {!tree || loading ? (treeExist ? <LoadingSpinner/> : <CreateWindow isOpen={modalStatus}/>) : null}
+          {tree && node && window === windowList.informationWindow && modalStatus && (
+              <SideWindow isOpen={modalStatus} node={node} />
+          )}
+          {node && window === windowList.memberWindow && modalStatus && (
+              <MemberWindow isOpen={modalStatus} node={node} />
+          )}
+          {node && window === windowList.changeWindow && modalStatus && (
+              <div className="absolute z-50">
+                <EditDetailsModal isOpen={modalStatus} node={node}/>
+              </div>
+          )}
+          {node && window === windowList.addWindow && modalStatus && (
+              <EditDetailsModal isOpen={modalStatus}/>
+          )}
+        </div>
       </div>
-    </div>
+      {!!localStorage.getItem('TREE_ID') && modalStatus && window === windowList.profileWindow && isAuth && <Profile />}
+    </>
    )
 }
 

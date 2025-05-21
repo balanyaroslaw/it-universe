@@ -18,7 +18,7 @@ function MainMenu() {
   },[])
   const open = useModalStore((state)=>state.open)
   return (
-    <div className="absolute w-full bg-tree shadow-md z-50 top-0">
+    <div className="fixed w-full bg-tree shadow-md z-50 top-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex w-full justify-center items-center">

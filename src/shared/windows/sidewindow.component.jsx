@@ -10,6 +10,7 @@ function SideWindow({ node }) {
   const close = useModalStore((state) => state.close);
   const removeNode = useTreeStore((state) => state.removeNode);
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
+  const [isUpdatingImage, setIsUpdatingImage] = useState(false);
   const handleDelete = async () => {
     if (isConfirmingDelete) {
       await removeNode(node.id);
@@ -38,11 +39,17 @@ function SideWindow({ node }) {
       <div className="flex-1 overflow-y-auto">
         <div className="p-2">
           <div className="flex items-center justify-center">
-            <div className="w-[90px] border-4 border-[#CBE68B] rounded-full overflow-hidden pt-3 px-2">
-              <img src={node.gender === 'female' ? Woman : Man} alt=""/>
+            <div className="w-[90px] h-[90px] border-4 border-[#CBE68B] rounded-full overflow-hidden">
+              <img
+                className="w-full h-full object-cover"
+                src={!node.img ? (node.gender === 'female' ? Woman : Man) : node.img}
+                alt=""
+              />
             </div>
           </div>
-          <h3 className="text-center text-md font-bold font-comfortaa text-brown">{node.firstName} <br/> {node.lastName}</h3>
+          <h3 className="text-center text-md font-bold font-comfortaa text-brown">
+            {node.firstName} <br /> {node.lastName}
+          </h3>
         </div>
 
         <div className="w-full bg-[#CBE68B] h-[2px]"></div>

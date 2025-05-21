@@ -65,14 +65,12 @@ function NodeComponent({width, height, position, scale=1, node, isSibling}) {
                     cy={imageSize.height / 2 + 10}
                     r={Math.min(imageSize.width, imageSize.height) / 2}
                     fill="#FEFFF1"
-                    stroke="#A2C450"        
-                    strokeWidth={3}   
                 />
 
                 <image
                     x={(width - imageSize.width) / 2}
                     y={10}
-                    href={node.gender === 'female' ? Woman : Man}
+                    href={!node.img?node.gender === 'female' ? Woman : Man:node.img}
                     width={imageSize.width}
                     height={imageSize.height}
                     clipPath="url(#imagePerson)"

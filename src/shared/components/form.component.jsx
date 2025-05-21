@@ -37,7 +37,7 @@ const AuthForm = ({ login }) => {
         : await userService.logIn(data);
         
       if (response.access_token && response.refresh_token) {
-        await navigate('/tree');
+        await navigate('/');
       }
     } catch (error) {
       setSubmitError(

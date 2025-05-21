@@ -1,5 +1,5 @@
 import httpService from "./http.service";
-
+import { fileToBytes } from "../../utilities/bytes";
 class TreeService{
 
     async getTree(treeId){
@@ -19,7 +19,7 @@ class TreeService{
             const response = await httpService.post('/tree', {name:name});
             const tree = response.data;
             if(tree){
-                this.setTree(tree)
+                this.setTree(tree.id)
                 return tree
             }
         } catch (error) {
@@ -43,7 +43,7 @@ class TreeService{
                 await httpService.post(`tree/${treeID}`,parent,
                 {
                     'Content-Type': 'multipart/form-data'
-                });
+                }, parentData.photos[0] || null);
             }
         } catch (error) {
             console.log('Add parent', error)
@@ -66,7 +66,7 @@ class TreeService{
                 await httpService.post(`tree/${treeID}`,sibling,
                 {
                     'Content-Type': 'multipart/form-data'
-                });
+                }, siblingData.photos[0] || null);
             }
         } catch (error) {
             console.log('Add sibling', error)
@@ -88,7 +88,7 @@ class TreeService{
                 }
                 await httpService.post(`tree/${treeID}`, child,{
                     'Content-Type': 'multipart/form-data'
-                });
+                }, childData.photos[0] || null);
             }
         } catch (error) {
             console.log('Add child', error)
@@ -106,7 +106,6 @@ class TreeService{
     }
 
     async changeData(treeID, nodeId, data){
-        console.log(nodeId)
         try {
             if(treeID){
                 const newData = {
@@ -120,13 +119,17 @@ class TreeService{
                 await httpService.patch(`tree/${treeID}/${nodeId}`,newData,
                 {
                     'Content-Type': 'multipart/form-data'
-                });
+                }, data.photos[0] || null);
 
             }
         } catch (error) {
             console.log('Change data', error)
         }
     }
+
+    async deleteImage(treeID, nodeId){
+        await httpService.delete(`/tree/${treeID}/${nodeId}/image`)
+    }       
 
     setTree(treeId){
         localStorage.setItem('TREE_ID', treeId)

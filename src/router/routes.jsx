@@ -8,10 +8,10 @@ export const publicRoutes = [
         route:'/',
         element:<Dashboard/>
     },
-    /*{
+    {
         route:'/about',
         element:<AboutUs/>
-    },*/
+    },
     {
         route:'/login',
         element:<Login/>

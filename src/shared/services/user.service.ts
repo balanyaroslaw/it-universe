@@ -57,6 +57,16 @@ class UserService{
       }
     }
 
+    async uploadImage(file){
+      await httpService.patch('/user',null,{
+        'Content-Type': 'multipart/form-data'
+      }, file)
+    }
+
+    async removeImage(){
+      await httpService.delete('/user/image')
+    }
+
     async LogOut(){
       this.logout();
     }

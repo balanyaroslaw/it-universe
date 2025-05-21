@@ -1,5 +1,5 @@
 import axios from 'axios';
-
+import { bytesToBase64 } from '../../utilities/bytes';
 class HttpService {
   constructor() {
     this.httpClient = axios.create({
@@ -68,10 +68,16 @@ class HttpService {
     return this.httpClient.get(url, config);
   }
 
-  post(url, data, config = {}) {
+  post(url, data, config = {}, file) {
     if (config && config['Content-Type'] === 'multipart/form-data') {
       const formData = new FormData();
-      formData.append('data', JSON.stringify(data))
+      formData.append('data', JSON.stringify(data));
+
+      if(file){
+        formData.append('file', file);
+      }
+
+
       const formConfig = {
         ...config,
         headers: {
@@ -94,10 +100,18 @@ class HttpService {
     return this.httpClient.delete(url, config);
   }
 
-  patch(url, data, config = {}) {
+  patch(url, data, config = {}, file) {
     if (config && config['Content-Type'] === 'multipart/form-data') {
       const formData = new FormData();
-      formData.append('data', JSON.stringify(data))
+      
+      if(data){
+        formData.append('data', JSON.stringify(data));
+      }
+      
+      if(file){
+        formData.append('file', file);
+      }
+
       const formConfig = {
         ...config,
         headers: {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Trees from '../assets/tree_bg.png';
 import Family from '../assets/family.png';
 import Rect1 from '../assets/curv_rect.png';
@@ -11,12 +11,15 @@ import useModalStore from '../store/modal.store';
 import { windowList } from '../shared/keys/windowList';
 import userService from '../shared/services/user.service';
 import { useNavigate } from 'react-router-dom';
-
+import MainMenu from "../shared/components/menu.component";
+import useTreeStore from "../store/tree.store";
 function Dashboard() {
   const [showModal, setShowModal] = useState(false);
   const modalStatus = useModalStore((state) => state.isOpen);
   const window = useModalStore((state) => state.window);
   const isAuth = userService.isAuthenticated();
+   const [tree, node] = [useTreeStore((state) => state.tree), useTreeStore((state) => state.node)];
+  const getTree = useTreeStore((state)=>state.getTree);
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -31,8 +34,13 @@ function Dashboard() {
     }
   };
 
+  useEffect(()=>{
+    getTree();
+  },[])
+
   return (
     <>
+      <MainMenu/>
       <div className="h-full bg-cream flex flex-col items-center py-4 sm:py-8 md:py-12 overflow-hidden">
         {/* Hero Section */}
         <div className="relative w-full h-full flex flex-col">
@@ -42,7 +50,7 @@ function Dashboard() {
               <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-brown text-center">ANCTREE</h1>
             </div>
             <p className="text-brown text-center text-base sm:text-lg md:text-xl font-comfortaa w-full sm:w-[70%] md:w-[50%] z-10">
-              Створи унікальне родове дерево за лічені хвилини та Збережи пам'ять про рід
+              створи унікальне родове дерево за лічені хвилини та збережи пам'ять про рід
             </p>
           </div>
 
