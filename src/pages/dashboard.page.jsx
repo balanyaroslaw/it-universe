@@ -35,8 +35,13 @@ function Dashboard() {
   };
 
   useEffect(()=>{
-    getTree();
-  },[])
+    const fetchTree = async (id)=>{
+        await getTree(id);
+    }
+    if(!!localStorage.getItem('TREE_ID')){
+      fetchTree(localStorage.getItem('TREE_ID'));
+    }
+    },[])
 
   return (
     <>

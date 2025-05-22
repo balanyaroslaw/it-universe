@@ -7,7 +7,7 @@ function Login() {
     <div className="max-w-full flex h-full justify-center items-center my-5">
         <div className="flex w-full justify-center items-center">
           <AuthForm login={true}/>
-          <div className="absolute h-full inset-0 bottom-0 z-0">
+          <div className="absolute bottom-0 z-0">
             <img src={Trees} alt="" className='h-full'/>
           </div>
         </div>

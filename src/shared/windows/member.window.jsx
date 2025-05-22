@@ -23,7 +23,7 @@ function MemberWindow({isOpen, node}) {
             <div className="p-4">
               <p className="text-sm text-gray-500 mb-3">Виберть члена родини:</p>
               
-              <div className="grid grid-cols-3 gap-4">
+              <div className={`grid ${node.isRoot?'grid-cols-3':'grid-cols-2'} gap-4`}>
                 <button                    
                     className={`flex flex-col items-center p-4 rounded-lg transition-colors border-2 border-tree 
                     focus:outline-none focus:ring-2 focus:ring-indigo-500`}
@@ -46,7 +46,7 @@ function MemberWindow({isOpen, node}) {
                     <h3 className="font-medium font-comfortaa text-brown">Додати брата/сестру</h3>
                   </button>
 
-                  <button                    
+                  {node.isRoot&&<button                    
                     className={`flex flex-col items-center p-4 rounded-lg transition-colors border-2 border-tree 
                     focus:outline-none focus:ring-2 focus:ring-indigo-500`}
                     onClick={()=>open(windowList.addWindow, 'child')}
@@ -55,7 +55,7 @@ function MemberWindow({isOpen, node}) {
                       <Baby size={24} className="text-[#788951]" />
                     </div>
                     <h3 className="font-medium font-comfortaa text-brown">Додати дітей</h3>
-                  </button>
+                  </button>}
               </div>
             </div>
             

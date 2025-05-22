@@ -5,26 +5,32 @@ import userService from '../services/user.service';
 import useModalStore from '../../store/modal.store';
 import useTreeStore from '../../store/tree.store';
 import { useNavigate } from 'react-router-dom';
+import useUserStore from '../../store/user.store';
 function Profile(){
   const getTree = useTreeStore((state)=>state.getTree)
   const tree = useTreeStore((state)=>state.tree)
   const [isUpdatingImage, setIsUpdatingImage] = useState(false);
+  const [image, setImage] = useState();
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const [username, setUsername] = useState(`${tree?.firstName} ${tree?.lastName}`);
 
   useEffect(()=>{
     const fetchTree = async ()=>{
         await getTree();
     }
     if(!!localStorage.getItem('TREE_ID')){
-      fetchTree();
+      fetchTree(localStorage.getItem('TREE_ID'));
     }
     else{
       open(windowList.createTree)
     }
-  },[])
+  },[isUpdatingImage])
 
-  const username = !!localStorage.getItem('ACCESS_TOKEN')&&`${tree?.firstName} ${tree?.lastName}`; 
+  useEffect(()=>{
+    userService.getUser().then(user=>setUser(user));
+  },[isUpdatingImage])
+
   const close = useModalStore((state)=>state.close)
 
 
@@ -33,17 +39,10 @@ function Profile(){
     if (file) {
       try {
         setIsUpdatingImage(true);
-        // Here you would typically upload the image to your server
-        // and update the user's img parameter
-        // For example:
-        // await userService.updateProfileImage(file);
-        // const updatedUser = await userService.getUserData(); // Refresh user data
-        // setUser(updatedUser);
-        
-        // This is a placeholder for the actual implementation
+        setUser({img:URL.createObjectURL(file)})
         console.log("Image would be uploaded:", file.name);
-        
-        // After successful upload
+        setImage(file);
+        userService.uploadImage(file);
         setIsUpdatingImage(false);
       } catch (error) {
         console.error("Error uploading image:", error);
@@ -52,18 +51,12 @@ function Profile(){
     }
   };
   
-  const removeImage = async () => {
+  const handleRemoveImage = async () => {
     try {
       setIsUpdatingImage(true);
-      // Here you would typically call an API to remove the user's image
-      // For example:
-      // await userService.removeProfileImage();
-      // const updatedUser = await userService.getUserData(); // Refresh user data
-      // setUser(updatedUser);
-      
-      // This is a placeholder for the actual implementation
+      setUser({img:null})
       console.log("Image would be removed");
-      
+      userService.removeImage();
       // After successful removal
       setIsUpdatingImage(false);
     } catch (error) {
@@ -71,7 +64,6 @@ function Profile(){
       setIsUpdatingImage(false);
     }
   };
-
 
   return (
     <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg p-6 border-l z-50">
@@ -89,7 +81,7 @@ function Profile(){
               <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
               </div>
-            ) : user?.img ? (
+            ) :  user?.img ? (
               <div className="relative">
                 <img 
                   src={user.img} 
@@ -103,7 +95,7 @@ function Profile(){
                     </label>
                     <button 
                       className="bg-red-500 p-2 rounded-full"
-                      onClick={removeImage}
+                      onClick={()=>handleRemoveImage()}
                     >
                       <Trash2 size={16} className="text-white" />
                     </button>
@@ -126,7 +118,7 @@ function Profile(){
               accept="image/*"
               onChange={handleImageChange}
             />
-          </div>*
+          </div>
           
           <div className="flex items-center space-x-3 w-full">
             <User className="text-gray-600" size={24} />
@@ -137,7 +129,7 @@ function Profile(){
         <div className="flex flex-col space-y-3 mt-4">
           <button 
             className="flex items-center justify-center w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 transition duration-300"
-            onClick={() => alert('Перехід до дерева')}
+            onClick={() => navigate('/tree')}
           >
             Перейти до дерева
           </button>

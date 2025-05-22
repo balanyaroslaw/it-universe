@@ -10,7 +10,6 @@ function SideWindow({ node }) {
   const close = useModalStore((state) => state.close);
   const removeNode = useTreeStore((state) => state.removeNode);
   const [isConfirmingDelete, setIsConfirmingDelete] = React.useState(false);
-  const [isUpdatingImage, setIsUpdatingImage] = useState(false);
   const handleDelete = async () => {
     if (isConfirmingDelete) {
       await removeNode(node.id);

@@ -104,9 +104,7 @@ class HttpService {
     if (config && config['Content-Type'] === 'multipart/form-data') {
       const formData = new FormData();
       
-      if(data){
-        formData.append('data', JSON.stringify(data));
-      }
+     formData.append('data', JSON.stringify(data));
       
       if(file){
         formData.append('file', file);

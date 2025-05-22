@@ -43,7 +43,7 @@ class TreeService{
                 await httpService.post(`tree/${treeID}`,parent,
                 {
                     'Content-Type': 'multipart/form-data'
-                }, parentData.photos[0] || null);
+                }, parentData?.photos?.[0] || null);
             }
         } catch (error) {
             console.log('Add parent', error)
@@ -66,7 +66,7 @@ class TreeService{
                 await httpService.post(`tree/${treeID}`,sibling,
                 {
                     'Content-Type': 'multipart/form-data'
-                }, siblingData.photos[0] || null);
+                }, siblingData?.photos?.[0] || null);
             }
         } catch (error) {
             console.log('Add sibling', error)
@@ -88,7 +88,7 @@ class TreeService{
                 }
                 await httpService.post(`tree/${treeID}`, child,{
                     'Content-Type': 'multipart/form-data'
-                }, childData.photos[0] || null);
+                }, childData?.photos?.[0] || null);
             }
         } catch (error) {
             console.log('Add child', error)

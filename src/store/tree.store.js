@@ -66,14 +66,16 @@ const useTreeStore = create((set) => ({
 
       if(!childNode?.parents && childNode?.parents.length<2){
         const error = "У вас не вказані батьки"
+        console.log(error)
         return error
       }
 
       (async()=>{
         const parentsId = childNode?.parents.map(parent=>parent.id);
-        if(treeExist && parentsId.length>1){
+        if(treeExist && parentsId.length>=1){
           await treeService.addSibling(treeId, parentsId, newNode);
           const tree = await state.getTree(treeId);
+          console.log(tree )
           if(tree){
             set({ loading: false }); 
           }

@@ -58,13 +58,18 @@ class UserService{
     }
 
     async uploadImage(file){
-      await httpService.patch('/user',null,{
+      await httpService.patch('/user',{},{
         'Content-Type': 'multipart/form-data'
       }, file)
     }
 
     async removeImage(){
       await httpService.delete('/user/image')
+    }
+
+    async getUser(){
+      const response =  await httpService.get('/user')
+      return response.data;
     }
 
     async LogOut(){

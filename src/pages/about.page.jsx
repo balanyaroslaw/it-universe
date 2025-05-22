@@ -3,7 +3,7 @@ function AboutUs() {
     return (
       <>
       <MainMenu/>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gray-50 py-5">
           
           <div className="bg-gradient-to-r from-green-50 to-blue-50 py-16">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,7 +18,7 @@ function AboutUs() {
             </div>
           </div>
           
-          <div className="py-16 bg-white overflow-hidden flex">
+          <div className="py-16 bg-white overflow-hidden flex px-8">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="items-center">
                 <div>
